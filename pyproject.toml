@@ -8,17 +8,11 @@ license-files = ["LICENSE"]
 authors = [{ name = "Roman Solovyev (ZFTurbo)" }]
 keywords = []
 classifiers = []
+# Core: what `import msst` needs. The inference.py / ensemble.py command line needs `cli` too.
 dependencies = [
   "PyYAML",
-  "librosa",
-  "matplotlib",
-  "ml-collections",
   "numpy>=2.0.0",
-  "omegaconf",
-  "pandas",
-  "soundfile",
   "torch>=2.3",
-  "torchaudio",
   "tqdm"
 ]
 dynamic = ["version"]
@@ -30,6 +24,15 @@ Issues = "https://github.com/ZFTurbo/Music-Source-Separation-Training/issues"
 Repository = "https://github.com/ZFTurbo/Music-Source-Separation-Training"
 
 [project.optional-dependencies]
+cli = [
+  "librosa",
+  "matplotlib",
+  "ml-collections",
+  "omegaconf",
+  "pandas",
+  "soundfile",
+  "torchaudio"
+]
 sageattention = ["sageattention ; platform_system == 'Linux' and platform_machine == 'x86_64'"]
 # models
 apollo = ["pytorch-lightning"]
@@ -113,5 +116,8 @@ py-modules = ["ensemble", "inference"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["configs*", "models*", "utils*"]
+include = ["configs*", "models*", "msst*", "utils*"]
 namespaces = true
+
+[dependency-groups]
+test = ["pytest", "hypothesis"]

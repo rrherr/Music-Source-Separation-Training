@@ -30,6 +30,29 @@ Available models:
 2. **Note 2**: Thanks to [@lucidrains](https://github.com/lucidrains) for recreating the RoFormer models based on papers.
 3. **Note 3**: For `torchseg` gives access to more than 800 encoders from `timm` module. It's similar to `segm_models`.
 
+## Install
+
+The command line (`inference.py`, `ensemble.py`) needs the `cli` extra plus the extra for your model, e.g.:
+
+```bash
+pip install -e ".[cli,bs_roformer]"
+```
+
+To use the separation code as a library, install only the model extra and `import msst`:
+
+```python
+import msst  # BSRoformer, demix_array, plan_chunks, window
+```
+
+`msst.demix_array` is the chunked overlap-add loop with plain parameters and an `on_batch(done, total)` progress callback; `utils.model_utils.demix` wraps it for ConfigDict callers.
+
+## Tests
+
+```bash
+pip install -e ".[cli,mdx23c,bs_roformer]" --group test
+pytest tests
+```
+
 ## How to: Inference
 
 ### Inference example
@@ -52,6 +75,7 @@ Convert models to ONNX and TensorRT formats [here](https://github.com/ZFTurbo/MS
 * `models/*` - set of available model architectures
 * `inference.py` - process folder with music files and separate them
 * `utils/` - model loading, demixing and audio helpers used by inference
+* `msst/` - library entry points re-exported under one package name
 * `ensemble.py` - useful script to ensemble results of different models to make results better (see [docs](docs/ensemble.md)).
 
 ## Pre-trained models
