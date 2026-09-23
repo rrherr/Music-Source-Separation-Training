@@ -17,7 +17,7 @@ dependencies = [
   "omegaconf",
   "pandas",
   "soundfile",
-  "torch>=2.0.1",
+  "torch>=2.3",
   "torchaudio",
   "tqdm"
 ]
