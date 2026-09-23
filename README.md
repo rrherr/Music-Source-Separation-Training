@@ -1,12 +1,12 @@
-# Music Source Separation Universal Training Code
+# Music Source Separation Inference
 
-Repository for training models for music source separation. Repository is based on [kuielab code](https://github.com/kuielab/sdx23/tree/mdx_AB/my_submission/src) for [SDX23 challenge](https://github.com/kuielab/sdx23/tree/mdx_AB/my_submission/src). The main idea of this repository is to create training code, which is easy to modify for experiments. Brought to you by [MVSep.com](https://mvsep.com).
+Inference-only fork of [ZFTurbo/Music-Source-Separation-Training](https://github.com/ZFTurbo/Music-Source-Separation-Training): separate music files into stems with pre-trained models. Training, validation and GUI code have been removed. Original repository is based on [kuielab code](https://github.com/kuielab/sdx23/tree/mdx_AB/my_submission/src) for [SDX23 challenge](https://github.com/kuielab/sdx23/tree/mdx_AB/my_submission/src). Brought to you by [MVSep.com](https://mvsep.com).
 
 ## Models
 
 Model can be chosen with `--model_type` arg.
 
-Available models for training:
+Available models:
 
 * MDX23C based on [KUIELab TFC TDF v3 architecture](https://github.com/kuielab/sdx23/). Key: `mdx23c`.
 * Demucs4HT [[Paper](https://arxiv.org/abs/2211.08553)]. Key: `htdemucs`.
@@ -30,35 +30,6 @@ Available models for training:
 2. **Note 2**: Thanks to [@lucidrains](https://github.com/lucidrains) for recreating the RoFormer models based on papers.
 3. **Note 3**: For `torchseg` gives access to more than 800 encoders from `timm` module. It's similar to `segm_models`.
 
-## How to: Train
-
-To train model you need to:
-
-1) Choose model type with option `--model_type`, including: `mdx23c`, `htdemucs`, `segm_models`, `mel_band_roformer`, `bs_roformer`.
-2) Choose location of config for model `--config_path` `<config path>`. You can find examples of configs in [configs folder](configs/). Prefixes `config_musdb18_` are examples for [MUSDB18 dataset](https://sigsep.github.io/datasets/musdb.html).
-3) If you have a check-point from the same model or from another similar model you can use it with option: `--start_check_point` `<weights path>`
-4) Choose path where to store results of training `--results_path` `<results folder path>`
-
-### Training example
-
-```bash
-python train.py \
-    --model_type mel_band_roformer \
-    --config_path configs/config_mel_band_roformer_vocals.yaml \
-    --start_check_point results/model.ckpt \
-    --results_path results/ \
-    --data_path 'datasets/dataset1' 'datasets/dataset2' \
-    --valid_path datasets/musdb18hq/test \
-    --num_workers 4 \
-    --device_ids 0
-```
-
-All training parameters are [here](https://github.com/ZFTurbo/Music-Source-Separation-Training/blob/main/utils/settings.py#L20).
-
-### Training with LoRA
-
-Look here: [LoRA training](docs/LoRA.md)
-
 ## How to: Inference
 
 ### Inference example
@@ -66,61 +37,26 @@ Look here: [LoRA training](docs/LoRA.md)
 ```bash
 python inference.py \
     --model_type mdx23c \
-    --config_path configs/config_mdx23c_musdb18.yaml \
+    --config_path configs/config_musdb18_mdx23c.yaml \
     --start_check_point results/last_mdx23c.ckpt \
     --input_folder input/wavs/ \
     --store_dir separation_results/
 ```
 
-All inference parameters are [here](https://github.com/ZFTurbo/Music-Source-Separation-Training/blob/main/utils/settings.py#L130).
+All inference parameters are in `parse_args_inference` in [utils/settings.py](utils/settings.py).
 Convert models to ONNX and TensorRT formats [here](https://github.com/ZFTurbo/MSS_ONNX_TensorRT).
-
-## Useful notes
-
-* All batch sizes in config are adjusted to use with single NVIDIA A6000 48GB. If you have less memory please adjust correspodningly in model config `training.batch_size` and `training.gradient_accumulation_steps`.
-* It's usually always better to start with old weights even if shapes not fully match. Code supports loading weights for not fully same models (but it must have the same architecture). Training will be much faster.
 
 ## Code description
 
 * `configs/config_*.yaml` - configuration files for models
-* `models/*` - set of available models for training and inference
-* `dataset.py` - dataset which creates new samples for training
-* `gui-wx.py` - GUI interface for code
+* `models/*` - set of available model architectures
 * `inference.py` - process folder with music files and separate them
-* `train.py` - main training code for single GPU
-* `train_ddp.py` - training code for Multi GPU config. Faster than `train.py`. Use it for 2 or more GPUs.
-* `utils.py` - common functions used by train/valid
-* `valid.py` - validation of model with metrics
-* `ensemble.py` - useful script to ensemble results of different models to make results better (see [docs](docs/ensemble.md)).   
+* `utils/` - model loading, demixing and audio helpers used by inference
+* `ensemble.py` - useful script to ensemble results of different models to make results better (see [docs](docs/ensemble.md)).
 
 ## Pre-trained models
 
 Look here: [List of Pre-trained models](docs/pretrained_models.md)
-
-If you trained some good models, please, share them. You can post config and model weights [in this issue](https://github.com/ZFTurbo/Music-Source-Separation-Training/issues/1).
-
-## Dataset types
-
-Look here: [Dataset types](docs/dataset_types.md)
-
-## Augmentations
-
-Look here: [Augmentations](docs/augmentations.md)
-
-## Graphical user interface
-
-Look here: [GUI documentation](docs/gui.md) or see tutorial on [Youtube](https://youtu.be/M8JKFeN7HfU)
-
-## Package installation
-
-```bash
-pip install msst
-```
-- [Getting started](docs/getting_started.md) — getting started with MSST package
-- [Python API](docs/python_api.md) — signatures, parameters, return values, and errors.
-- [Command-line interface](docs/cli.md) — command syntax and shell examples.
-- [Compatibility](docs/compatibility.md) — model extras, devices, and audio formats.
-- [Experiments](docs/experiments.md) — portable organization and tracking.
 
 ## Citation
 

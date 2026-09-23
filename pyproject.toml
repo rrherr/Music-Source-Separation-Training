@@ -1,6 +1,6 @@
 [project]
 name = "music-source-separation-training"
-description = "Training and inference code for music source separation experiments."
+description = "Inference code for music source separation."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -16,12 +16,10 @@ dependencies = [
   "numpy>=2.0.0",
   "omegaconf",
   "pandas",
-  "requests",
   "soundfile",
   "torch>=2.0.1",
   "torchaudio",
-  "tqdm",
-  "wxPython ; platform_python_implementation == 'CPython'"
+  "tqdm"
 ]
 dynamic = ["version"]
 
@@ -32,24 +30,7 @@ Issues = "https://github.com/ZFTurbo/Music-Source-Separation-Training/issues"
 Repository = "https://github.com/ZFTurbo/Music-Source-Separation-Training"
 
 [project.optional-dependencies]
-accelerate = ["accelerate", "huggingface-hub>=0.23.0"]
-lora-loralib = ["loralib"]
-lora-peft = ["peft"]
-optimizer-8bit = ["bitsandbytes ; platform_system == 'Linux' and platform_machine == 'x86_64'"]
-optimizer-muon = ["pytorch-optimizer"]
-optimizer-prodigy = ["prodigyopt"]
 sageattention = ["sageattention ; platform_system == 'Linux' and platform_machine == 'x86_64'"]
-scheduler = ["transformers"]
-stream = ["keyboard", "pyaudio; python_version < '3.14'"]
-train = [
-  "audiomentations",
-  "auraloss",
-  "pedalboard",
-  "torch-l1-snr>=0.1.2",
-  "torch-log-wmse>=0.3.1",
-  "wandb"
-]
-validation = ["auraloss", "torch-l1-snr>=0.1.2", "torch-log-wmse>=0.3.1"]
 # models
 apollo = ["pytorch-lightning"]
 bandit = [
@@ -86,9 +67,9 @@ bs_roformer_experimental = [
   "rotary-embedding-torch"
 ]
 conformer = ["conformer"]
-experimental_mdx23c_stht = ["loralib"]
+experimental_mdx23c_stht = []
 htdemucs = ["demucs", "einops", "openunmix"]
-mdx23c = ["loralib"]
+mdx23c = []
 mel_band_conformer = [
   "beartype",
   "einops",
@@ -128,17 +109,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 include-package-data = true
-py-modules = [
-  "ensemble",
-  "inference",
-  "train",
-  "train_accelerate",
-  "train_ddp",
-  "valid",
-  "valid_ddp"
-]
+py-modules = ["ensemble", "inference"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["configs*", "gui*", "models*", "scripts*", "utils*"]
+include = ["configs*", "models*", "utils*"]
 namespaces = true
