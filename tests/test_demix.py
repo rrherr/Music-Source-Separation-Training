@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 import msst
-from utils.model_utils import autocast_for, demix
+from msst import autocast_for
 
 lengths = st.integers(min_value=1, max_value=1200)
 chunk_sizes = st.integers(min_value=4, max_value=200)
@@ -194,40 +194,11 @@ def test_autocast_can_be_disabled():
     assert not isinstance(autocast_for("mps", enabled=False), torch.autocast)
 
 
-# --- demix (ConfigDict wrapper) -----------------------------------------------------------------
-
-
-def _config(**inference):
-    from ml_collections import ConfigDict
-
-    return ConfigDict({
-        'audio': {'chunk_size': 64},
-        'inference': {'num_overlap': 2, 'batch_size': 2, **inference},
-        'training': {'instruments': ['vocals', 'other'], 'target_instrument': None, 'use_amp': False},
-    })
-
-
-@pytest.mark.parametrize("pbar", [False, True])
-def test_wrapper_names_the_instruments_and_matches_the_core(pbar):
-    mix = np.random.default_rng(2).standard_normal((2, 500)).astype(np.float32)
-    out = demix(_config(), GainModel(1.0, 0.25), mix, torch.device('cpu'), 'bs_roformer', pbar=pbar)
-    assert list(out) == ['vocals', 'other']
-    core = _run(GainModel(1.0, 0.25), mix, 64, 2, 2)
-    np.testing.assert_array_equal(out['vocals'], core[0])
-    np.testing.assert_array_equal(out['other'], core[1])
-
-
-def test_wrapper_prefers_inference_chunk_size():
-    mix = np.random.default_rng(3).standard_normal((2, 500)).astype(np.float32)
-    out = demix(_config(chunk_size=100), GainModel(1.0, 1.0), mix, 'cpu', 'bs_roformer')
-    np.testing.assert_array_equal(out['vocals'], _run(GainModel(1.0), mix, 100, 2, 2)[0])
-
-
 # --- the msst package ---------------------------------------------------------------------------
 
 
-def test_importing_msst_does_not_pull_in_cli_dependencies():
-    heavy = ['librosa', 'matplotlib', 'pandas', 'ml_collections', 'omegaconf', 'soundfile']
+def test_importing_msst_needs_only_the_core_dependencies():
+    heavy = ['beartype', 'packaging', 'PoPE_pytorch', 'librosa', 'models', 'utils']
     code = f"import sys, msst; print([m for m in {heavy!r} if m in sys.modules])"
     out = subprocess.run([sys.executable, '-c', code], cwd=ROOT, capture_output=True, text=True, check=True)
     assert out.stdout.strip() == '[]'
