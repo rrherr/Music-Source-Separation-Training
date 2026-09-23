@@ -6,7 +6,6 @@ A library-only, BS-RoFormer-only fork of
 ([paper](https://arxiv.org/abs/2309.02612), recreated by [@lucidrains](https://github.com/lucidrains/BS-RoFormer))
 and the chunked overlap-add loop that runs it over a whole recording. Training, validation,
 the GUI, the command line, configs and every other architecture have been removed.
-Its main user is bluegrass-karaoke (`bgk`).
 
 ## Install
 
@@ -55,17 +54,4 @@ output.
 ```bash
 pip install -e . --group test
 pytest
-```
-
-## Citation
-
-```text
-@misc{solovyev2023benchmarks,
-      title={Benchmarks and leaderboards for sound demixing tasks},
-      author={Roman Solovyev and Alexander Stempkovskiy and Tatiana Habruseva},
-      year={2023},
-      eprint={2305.07489},
-      archivePrefix={arXiv},
-      primaryClass={cs.SD}
-}
 ```
